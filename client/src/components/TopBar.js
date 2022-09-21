@@ -1,7 +1,6 @@
 import React, {useContext} from 'react'
 import {Context} from '../index'
-import {SHOP_ROUTE, BASKET_ROUTE, ADMIN_ROUTE, LOGIN_ROUTE} from '../utils/consts'
-import {Button} from 'react-bootstrap'
+import {SHOP_ROUTE, BASKET_ROUTE, ADMIN_ROUTE, LOGIN_ROUTE, LOGOUT_ROUTE} from '../utils/consts'
 import { observer } from 'mobx-react-lite'
 import { Container } from 'react-bootstrap'
 import {useNavigate} from "react-router-dom"
@@ -12,11 +11,10 @@ const NavBar = observer(() => {
     const {user} = useContext(Context)
     const navigate = useNavigate()
 
-    const logOut = () => {
-        user.setUser({})
-        user.setIsAuth(false)
-    }
-
+    // const logOut = () => {
+    //     user.setUser({})
+    //     user.setIsAuth(false)
+    // }
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -30,8 +28,15 @@ const NavBar = observer(() => {
                         }}>Админ панель
                     </Nav.Link> 
                     
-                    <Nav.Link onClick={()=> logOut()}
+                    {/* <Nav.Link onClick={()=> logOut()}
                         >Выйти
+                    </Nav.Link> */}
+                    <Nav.Link onClick={()=>{
+                        navigate(LOGOUT_ROUTE)
+                        user.setUser({})
+                        user.setIsAuth(false)
+                    }}>Выйти
+                        
                     </Nav.Link>
                 </Nav>
 
