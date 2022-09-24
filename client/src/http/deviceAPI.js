@@ -43,6 +43,6 @@ export const addToBasket = async (deviceId) => {
 }
 
 export const getBasket = async () => {
-    const {response} = await $authHost.get('api/basket')
-    return response
+    const {data} = await $authHost.get('api/basket')
+    return data
 } 

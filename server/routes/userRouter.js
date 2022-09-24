@@ -10,6 +10,7 @@ router.post('/registration',
     body('password').isLength({min: 6, max: 32}),
     userController.registration)
 router.post('/login', userController.login)
+
 // router.get('/auth', authMiddleware, userController.check)
 //
 router.post('/logout', userController.logout);

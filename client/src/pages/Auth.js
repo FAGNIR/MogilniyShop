@@ -5,9 +5,6 @@ import Button from 'react-bootstrap/Button'
 import {NavLink, useLocation} from 'react-router-dom'
 import {REGISTRATION_ROUTE, LOGIN_ROUTE, SHOP_ROUTE} from '../utils/consts'
 import Row from 'react-bootstrap/Row'
-// import {login, registration} from '../http/userAPI'
-import UserStore from '../store/UserStore'
-
 import { observer } from 'mobx-react-lite'
 import {Context} from '../index'
 import {useNavigate} from "react-router-dom"
@@ -25,12 +22,15 @@ const Auth = observer(() => {
     const click = async () => {
         try{
             if(isLogin) {
-                data = await UserStore.login(email, password)
+                data = await user.login(email, password)
             }else{
-                data = await UserStore.registration(email, password)
+                data = await user.registration(email, password)
             }
-            user.setUser(user)
-            user.setIsAuth(true)
+            if(user.isActivated)
+            {
+                user.setUser(user)
+                user.setIsAuth(true)
+            }
             navigate(SHOP_ROUTE)
         }catch(e){
             alert(e)

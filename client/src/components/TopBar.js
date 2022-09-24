@@ -11,37 +11,35 @@ const NavBar = observer(() => {
     const {user} = useContext(Context)
     const navigate = useNavigate()
 
-    // const logOut = () => {
-    //     user.setUser({})
-    //     user.setIsAuth(false)
-    // }
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
         <Navbar.Brand style={{color:'white'}} onClick={()=>navigate(SHOP_ROUTE)}>MogilniyShop</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-        {user.isAuth ? 
-                <Nav className="me-auto">
+        
+        {user.isAdmin ? 
+                <Nav className="me-right">
                     <Nav.Link onClick={()=>{
                         navigate(ADMIN_ROUTE)
                         }}>Админ панель
                     </Nav.Link> 
                     
-                    {/* <Nav.Link onClick={()=> logOut()}
-                        >Выйти
-                    </Nav.Link> */}
+                </Nav>
+            :
+            <Nav></Nav>
+        }
+        {user.isAuth ?
+                <Nav className="me-auto">
                     <Nav.Link onClick={()=>{
-                        navigate(LOGOUT_ROUTE)
                         user.setUser({})
                         user.setIsAuth(false)
+                        user.userOrAdmin(false)
+                        navigate(LOGOUT_ROUTE) 
                     }}>Выйти
-                        
                     </Nav.Link>
+
                 </Nav>
-
-
-
                 :
                 <Nav className="me-auto" style={{color: 'black'}}>
                     <Nav.Link onClick={()=>{
@@ -49,7 +47,7 @@ const NavBar = observer(() => {
                         }}>Авторизация
                     </Nav.Link>
                 </Nav>
-            }
+        }
         {user.isAuth ?
                 <Nav className="me-left">    
                     <Nav.Link onClick={()=>{

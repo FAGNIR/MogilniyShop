@@ -4,7 +4,6 @@ import AppRouter from "./components/AppRouter";
 import TopBar from "./components/TopBar";
 import { observer } from 'mobx-react-lite'
 import {Context} from './index'
-import { check } from "./http/userAPI";
 import { Spinner } from "react-bootstrap";
 
 const App = observer( () => {
@@ -14,21 +13,29 @@ const App = observer( () => {
   useEffect(()=>{
       if(localStorage.getItem('token'))
       {
-        user.checkAuth()
+        // if(user.checkAuth())
+        // {
+        //   //user.setUser(data)
+        //   user.setIsAuth(true) 
+        // }
+         
       }
-
-      check().then(data=>{
+      user.checkAuth().then(data=>{
         user.setUser(data)
-        //user.setIsAuth(true) 
+        user.setIsAuth(true) 
       }).finally(()=>setLoading(false)) 
+      // check().then(data=>{
+      //   user.setUser(data)
+      //   user.setIsAuth(true) 
+      // }).finally(()=>setLoading(false))
   }, [])
 
-  if(loading) {
+  if(loading) { 
     return <Spinner animation={"grow"}/>
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter> 
       <TopBar />
       <AppRouter />
     </BrowserRouter>

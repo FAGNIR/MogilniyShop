@@ -1,13 +1,11 @@
 import {makeAutoObservable} from 'mobx'
-//import { IUser } from "./IUser";
-import axios from 'axios';
-
-import {login, registration, logout} from '../http/userAPI'
+import {login, registration, logout, checkAuth} from '../http/userAPI'
 
 export default class UserStore{
     constructor(){
         this._isAuth = false
         this._user = {}
+        this._role = false
 
         makeAutoObservable(this)
     }
@@ -18,12 +16,15 @@ export default class UserStore{
     // setUser(user){
     //     this._user = user
     // }
-    // get isAuth(){
-    //     return this._isAuth
-    // }
-    // get user(){
-    //     return this._user
-    // }
+    get isAuth(){
+        return this._isAuth
+    }
+    get isAdmin(){
+        return this._role
+    }
+    userOrAdmin(role){
+        this._role = role;
+    }
     setIsAuth(bool) {
         this._isAuth = bool;
     }
@@ -35,10 +36,15 @@ export default class UserStore{
     async login(email, password){
         try {
             const response = await login(email, password);
-            console.log(response.data.user.isActivated)
-            // localStorage.setItem('token', response.data.accessToken);
-            this.setIsAuth(true)
+            localStorage.setItem('token', response.data.accessToken);
             this.setUser(response.data.user)
+            if(response.data.user.isActivated)
+            {
+                this.setIsAuth(true)
+            }
+            
+            if(response.data.user.role === "ADMIN")
+                this.userOrAdmin(response.data.user.role)
         } catch (e) {
             console.log(e.response?.data?.message)
         }
@@ -47,19 +53,22 @@ export default class UserStore{
     async registration(email, password){
         try {
             const response = await registration(email, password);
-            console.log(response);
             localStorage.setItem('token', response.data.accessToken);
-            this.setIsAuth(true)
             this.setUser(response.data.user)
+            if(response.data.user.isActivated)
+            {
+                this.setIsAuth(true);
+            }
+            if(response.data.user.role === "ADMIN")
+                this.userOrAdmin(response.data.user.role)
         } catch (e) {
             console.log(e.response?.data?.message)
         }
     }
-
+ 
     async logout(){
         try {
             const response = await logout();
-            console.log(response);
             localStorage.removeItem('token');
             this.setIsAuth(false)
             this.setUser({});
@@ -67,14 +76,20 @@ export default class UserStore{
             console.log(e.response?.data?.message)
         }
     }
-
+  
     async checkAuth() {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`, { withCredentials: true });
+            const response = await checkAuth();
             console.log(response);
             localStorage.setItem('token', response.data.accessToken);
-            this.setIsAuth(true);
+            if(response.data.user.isActivated)
+            {
+                this.setIsAuth(true);
+            }
             this.setUser(response.data.user);
+            if(response.data.user.role === "ADMIN")
+                this.userOrAdmin(response.data.user.role)
+                
         }
         catch (e) {
             console.log(e.response?.data?.message);
